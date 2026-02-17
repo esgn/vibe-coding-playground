@@ -1,0 +1,274 @@
+/**
+ * ==============================================================================
+ * RECTANGLE CONTROLS STYLES
+ * ==============================================================================
+ * 
+ * Styles for the rectangle controls UI panel.
+ * ==============================================================================
+ */
+
+/* CONTROLS PANEL */
+.rectangle-controls {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  padding: 15px;
+  min-width: 200px;
+  z-index: 1000;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+}
+
+/* POSITION VARIANTS */
+.rectangle-controls--top-left {
+  top: 10px;
+  left: 10px;
+}
+
+.rectangle-controls--top-right {
+  top: 10px;
+  right: 10px;
+}
+
+.rectangle-controls--bottom-left {
+  bottom: 10px;
+  left: 10px;
+}
+
+.rectangle-controls--bottom-right {
+  bottom: 10px;
+  right: 10px;
+}
+
+/* HEADER */
+.rectangle-controls__header h3 {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+/* BODY */
+.rectangle-controls__body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* FIELD */
+.rectangle-controls__field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.rectangle-controls__field label {
+  font-size: 12px;
+  font-weight: 500;
+  color: #555;
+}
+
+.rectangle-controls__field input {
+  padding: 6px 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 13px;
+  font-family: 'Courier New', monospace;
+  transition: border-color 0.2s;
+}
+
+.rectangle-controls__field input:focus {
+  outline: none;
+  border-color: #3498db;
+}
+
+.rectangle-controls__field input:hover {
+  border-color: #bbb;
+}
+
+/* VALUE (READ-ONLY) */
+.rectangle-controls__value {
+  padding: 6px 8px;
+  background: #f5f5f5;
+  border-radius: 4px;
+  font-size: 13px;
+  font-family: 'Courier New', monospace;
+  color: #555;
+}
+
+.rectangle-controls__value--small {
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+/* FOOTER */
+.rectangle-controls__footer {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #eee;
+}
+
+.rectangle-controls__hint {
+  margin: 0;
+  font-size: 11px;
+  color: #777;
+  line-height: 1.4;
+}
+
+/* Remove number input spinners in some browsers */
+.rectangle-controls__field input[type='number']::-webkit-outer-spin-button,
+.rectangle-controls__field input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.rectangle-controls__field input[type='number'] {
+  -moz-appearance: textfield;
+}
+
+/* EXPORT BUTTON */
+.rectangle-controls__export-btn {
+  margin-top: 8px;
+  padding: 8px 12px;
+  width: 100%;
+  background: #3498db;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.rectangle-controls__export-btn:hover {
+  background: #2980b9;
+}
+
+.rectangle-controls__export-btn:active {
+  background: #21618c;
+}
+
+/* ==============================================================================
+ * YAML MODAL
+ * ============================================================================== */
+
+.yaml-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  padding: 20px;
+}
+
+.yaml-modal__content {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  max-width: 600px;
+  width: 100%;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.yaml-modal__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.yaml-modal__header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.yaml-modal__close {
+  background: none;
+  border: none;
+  font-size: 28px;
+  color: #999;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  transition: background 0.2s, color 0.2s;
+}
+
+.yaml-modal__close:hover {
+  background: #f5f5f5;
+  color: #555;
+}
+
+.yaml-modal__body {
+  flex: 1;
+  padding: 20px;
+  margin: 0;
+  overflow: auto;
+  background: #f8f9fa;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #2c3e50;
+  border-top: none;
+  border-bottom: none;
+}
+
+.yaml-modal__footer {
+  display: flex;
+  gap: 10px;
+  padding: 16px 20px;
+  border-top: 1px solid #eee;
+  justify-content: flex-end;
+}
+
+.yaml-modal__copy-btn,
+.yaml-modal__close-btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.yaml-modal__copy-btn {
+  background: #27ae60;
+  color: white;
+}
+
+.yaml-modal__copy-btn:hover {
+  background: #229954;
+}
+
+.yaml-modal__copy-btn:active {
+  background: #1e8449;
+}
+
+.yaml-modal__close-btn {
+  background: #95a5a6;
+  color: white;
+}
+
+.yaml-modal__close-btn:hover {
+  background: #7f8c8d;
+}
+
+.yaml-modal__close-btn:active {
+  background: #6c7a7b;
+}
