@@ -1,6 +1,10 @@
 # React OpenLayers IGN Map
 
-A simple React + TypeScript webapp that displays an OpenLayers map in full screen with the PLAN IGN V2 WMTS dataset from IGN France.
+A React + TypeScript webapp that displays an interactive OpenLayers map with the PLAN IGN V2 WMTS dataset from IGN France, featuring an interactive rectangle overlay tool with resize, rotate, and YAML export capabilities.
+
+## 🚀 Live Demo
+
+Visit the live application: [https://esgn.github.io/vibe-coding-playground/](https://esgn.github.io/vibe-coding-playground/)
 
 ## 📖 Documentation
 
@@ -12,59 +16,106 @@ A simple React + TypeScript webapp that displays an OpenLayers map in full scree
 
 ## Features
 
+### Map Features
 - ✅ Full screen OpenLayers map
 - ✅ IGN PLAN V2 WMTS layer (French geographical data)
+- ✅ Smooth pan and zoom controls
+- ✅ Loading states and error handling
+- ✅ Configurable props (center, zoom, callbacks)
+
+### Rectangle Overlay Tool
+- ✅ Interactive rectangle overlay on the map
+- ✅ Drag rectangle body to move/translate
+- ✅ Drag corner handles to resize
+- ✅ Drag top handle to rotate
+- ✅ Hold Shift while rotating to snap to 15° increments
+- ✅ Properties panel with real-time dimensions
+- ✅ Manual input for precise width/height/angle values
+- ✅ YAML export with WGS84 coordinates
+
+### Technical Features
 - ✅ TypeScript for type safety
 - ✅ Vite for fast development and building
 - ✅ Custom hooks for map management
-- ✅ Error boundaries and error handling
-- ✅ Loading states
-- ✅ Configurable props (center, zoom, callbacks)
+- ✅ Error boundaries
 - ✅ Clean architecture with separation of concerns
+- ✅ Automated GitHub Pages deployment
 
 ## Project Structure
 
 ```
 src/
 ├── components/
-│   ├── MapComponent.tsx       # Main map component
-│   ├── MapComponent.css       # Map styles
-│   └── ErrorBoundary.tsx      # Error boundary wrapper
+│   ├── MapComponent.tsx          # Main map component
+│   ├── MapComponent.css          # Map styles
+│   ├── RectangleOverlay.tsx      # Rectangle overlay component
+│   ├── RectangleControls.tsx     # Rectangle properties UI panel
+│   ├── RectangleControls.css     # Controls panel styles
+│   ├── ErrorBoundary.tsx         # Error boundary wrapper
+│   └── index.ts                  # Component exports
 ├── hooks/
-│   └── useMap.ts              # Custom hook for map initialization
+│   ├── useMap.ts                 # Map initialization hook
+│   ├── useRectangleOverlay.ts    # Rectangle overlay hook
+│   └── index.ts                  # Hook exports
+├── interactions/
+│   └── RectangleInteraction.ts   # Rectangle user interaction handler
+├── utils/
+│   └── rectangleGeometry.ts      # Rectangle geometry calculations
 ├── config/
-│   └── map.config.ts          # Centralized configuration
+│   └── map.config.ts             # Centralized configuration
 ├── types/
-│   └── map.types.ts           # TypeScript type definitions
-├── App.tsx                    # Main app component
-├── main.tsx                   # Entry point
-├── index.css                  # Global styles
-└── examples.tsx               # Usage examples
+│   ├── map.types.ts              # Map type definitions
+│   └── rectangle.types.ts        # Rectangle type definitions
+├── App.tsx                       # Root component
+├── main.tsx                      # Entry point
+├── index.css                     # Global styles
+└── examples.tsx                  # Usage examples
 ```
 
 ## Architecture
 
 ### Components
-- **MapComponent**: Presentational component that renders the map and handles UI states (loading, error)
+- **MapComponent**: Renders the OpenLayers map with loading and error states
+- **RectangleOverlay**: Renders interactive rectangle on the map (controlled component)
+- **RectangleControls**: UI panel showing rectangle properties with input fields
 - **ErrorBoundary**: React error boundary to catch and display rendering errors
 
 ### Hooks
-- **useMap**: Custom hook that encapsulates all map initialization logic, including:
+- **useMap**: Encapsulates map initialization logic:
   - WMTS layer configuration
   - Map instance management
-  - Error handling
+  - Error handling and cleanup
+- **useRectangleOverlay**: Manages rectangle overlay:
+  - Vector layer creation
+  - Feature rendering (rectangle + handles)
+  - State synchronization
   - Cleanup on unmount
 
-### Configuration
-- **map.config.ts**: Centralized configuration for IGN API, map view settings, and WMTS parameters
-- **map.types.ts**: TypeScript interfaces for type safety and documentation
+### Interactions
+- **RectangleInteraction**: Custom OpenLayers interaction handler:
+  - Pointer event handling (down/move/up)
+  - Drag/resize/rotate logic
+  - Keyboard modifier support (Shift for snapping)
+  - Cursor feedback
 
-### Benefits
-- **Separation of Concerns**: Logic (hook), presentation (component), and configuration are separated
-- **Reusability**: The `useMap` hook can be used in different components
-- **Type Safety**: Full TypeScript coverage with custom types
-- **Error Handling**: Comprehensive error handling at multiple levels
-- **Testability**: Isolated units that can be tested independently
+### Utilities
+- **rectangleGeometry.ts**: Mathematical functions for:
+  - Rectangle creation with rotation
+  - Coordinate transformations (world ↔ local)
+  - Corner and handle position calculations
+  - Angle conversions (radians ↔ degrees)
+
+### Configuration
+- **map.config.ts**: IGN API settings, map view configuration, WMTS parameters
+- **map.types.ts**: TypeScript interfaces for map-related types
+- **rectangle.types.ts**: TypeScript interfaces for rectangle overlay types
+
+### Design Patterns
+- **Controlled Components**: State managed by parent, passed down as props
+- **Custom Hooks**: Encapsulate complex logic, promote reusability
+- **Separation of Concerns**: Logic, presentation, configuration separated
+- **Type Safety**: Full TypeScript coverage with strict mode
+- **Error Handling**: Comprehensive error boundaries and try-catch blocks
 
 ## Getting Started
 
@@ -100,6 +151,22 @@ Preview the production build:
 ```bash
 npm run preview
 ```
+
+### Deployment
+
+The application automatically deploys to GitHub Pages on push to the `main` branch.
+
+**Manual deployment:**
+```bash
+npm run build
+# Deploy the dist/ folder to your hosting service
+```
+
+**GitHub Pages setup:**
+1. Push code to GitHub repository
+2. GitHub Actions workflow (`.github/workflows/gh-pages.yml`) automatically builds and deploys
+3. Enable GitHub Pages in repository settings (source: gh-pages branch)
+4. Site will be available at `https://<username>.github.io/vibe-coding-playground/`
 
 ## Usage
 
@@ -161,11 +228,44 @@ function App() {
 
 See [examples.tsx](src/examples.tsx) for more usage examples.
 
-## Map Controls
+## Usage
+
+### Map Controls
 
 - **Pan**: Click and drag the map
 - **Zoom**: Use mouse wheel or pinch gesture on touch devices
 - **Zoom buttons**: Use the + and - buttons in the top-left corner
+
+### Rectangle Overlay Controls
+
+- **Move**: Click and drag the rectangle body
+- **Resize**: Click and drag any corner handle
+- **Rotate**: Click and drag the top handle (above rectangle)
+- **Snap Rotation**: Hold Shift while rotating to snap to 15° increments
+- **Manual Input**: Type exact values in the properties panel
+- **Export**: Click "Export to YAML" to get configuration with WGS84 coordinates
+
+### Rectangle Properties Panel
+
+The top-right panel shows:
+- **Width (m)**: Rectangle width in meters
+- **Height (m)**: Rectangle height in meters
+- **Angle (°)**: Rotation angle in degrees (0° = north)
+- **Center**: Map coordinates (EPSG:3857)
+
+You can edit these values directly by clicking on the input fields.
+
+### YAML Export
+
+Export rectangle configuration in YAML format:
+```yaml
+center:
+  - 2.349014  # longitude (WGS84)
+  - 48.852969 # latitude (WGS84)
+angle: 45.00  # degrees
+extentX: 2000.00  # width in meters
+extentY: 1000.00  # height in meters
+```
 
 ## Configuration
 
@@ -187,9 +287,9 @@ export const MAP_CONFIG = {
 }
 ```
 
-## API Props
+## API Reference
 
-The `MapComponent` accepts the following props:
+### MapComponent Props
 
 | Prop | Type | Default | Description |
 |------|------|---------|-------------|
@@ -200,6 +300,36 @@ The `MapComponent` accepts the following props:
 | `className` | `string` | `''` | Additional CSS class for the map container |
 | `onMapInit` | `(map: Map) => void` | `undefined` | Callback when map is initialized |
 | `onError` | `(error: Error) => void` | `undefined` | Callback when map fails to initialize |
+
+### RectangleOverlay Props
+
+| Prop | Type | Required | Description |
+|------|------|----------|-------------|
+| `map` | `Map` | ✅ | OpenLayers map instance |
+| `state` | `RectangleState` | ✅ | Current rectangle configuration |
+| `onChange` | `(state: RectangleState) => void` | ❌ | Callback when rectangle changes |
+| `editable` | `boolean` | ❌ | Whether user can interact (default: true) |
+| `style` | `RectangleStyle` | ❌ | Visual style overrides |
+
+### RectangleControls Props
+
+| Prop | Type | Required | Description |
+|------|------|----------|-------------|
+| `state` | `RectangleState` | ✅ | Current rectangle configuration |
+| `onChange` | `(state: RectangleState) => void` | ✅ | Callback to update rectangle |
+| `editable` | `boolean` | ❌ | Whether controls are editable (default: true) |
+| `position` | `'top-left' \| 'top-right' \| 'bottom-left' \| 'bottom-right'` | ❌ | Panel position (default: 'top-right') |
+
+### RectangleState Type
+
+```typescript
+interface RectangleState {
+  center: [number, number]  // Center coordinates in EPSG:3857
+  width: number             // Width in meters
+  height: number            // Height in meters
+  angle: number             // Rotation angle in radians
+}
+```
 
 ## License
 

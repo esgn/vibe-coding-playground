@@ -124,6 +124,7 @@
 
 .rectangle-controls__field input[type='number'] {
   -moz-appearance: textfield;
+  appearance: textfield;
 }
 
 /* EXPORT BUTTON */

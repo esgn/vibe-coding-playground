@@ -64,6 +64,67 @@ if (map) {
 }
 ```
 
+### Add rectangle overlay
+**File:** `src/App.tsx`
+```typescript
+const [rectangleState, setRectangleState] = useState<RectangleState>({
+  center: [261204, 6250258],
+  width: 2000,   // meters
+  height: 1000,  // meters
+  angle: 0       // radians
+})
+
+<RectangleOverlay
+  map={map}
+  state={rectangleState}
+  onChange={setRectangleState}
+  editable={true}
+/>
+
+<RectangleControls
+  state={rectangleState}
+  onChange={setRectangleState}
+  position="top-right"
+/>
+```
+
+### Customize rectangle style
+**File:** Any component with RectangleOverlay
+```typescript
+<RectangleOverlay
+  map={map}
+  state={rectangleState}
+  onChange={setRectangleState}
+  style={{
+    fillColor: 'rgba(255, 0, 0, 0.3)',
+    strokeColor: '#ff0000',
+    strokeWidth: 3,
+    handleSize: 10,
+    handleColor: '#ffffff'
+  }}
+/>
+```
+
+### Export rectangle to YAML
+Rectangle controls include an "Export to YAML" button that generates:
+```yaml
+center:
+  - 2.349014  # longitude
+  - 48.852969 # latitude
+angle: 45.00
+extentX: 2000.00
+extentY: 1000.00
+```
+
+Or programmatically:
+```typescript
+import { transform } from 'ol/proj'
+import { radiansToDegrees } from './utils/rectangleGeometry'
+
+const [lon, lat] = transform(state.center, 'EPSG:3857', 'EPSG:4326')
+const angleDeg = radiansToDegrees(state.angle)
+```
+
 ---
 
 ## 🔑 KEY SYNTAX
@@ -248,6 +309,103 @@ const [lon, lat] = transform(
   'EPSG:3857',
   'EPSG:4326'
 )
+```
+
+---
+
+## 🔲 RECTANGLE OPERATIONS
+
+### Create rectangle state
+```typescript
+import type { RectangleState } from './types/rectangle.types'
+
+const rectangleState: RectangleState = {
+  center: [261204, 6250258],  // EPSG:3857 coordinates
+  width: 2000,                 // meters
+  height: 1000,                // meters
+  angle: 0                     // radians (0 = north)
+}
+```
+
+### Update rectangle programmatically
+```typescript
+// Move rectangle
+setRectangleState(prev => ({
+  ...prev,
+  center: [newX, newY]
+}))
+
+// Resize
+setRectangleState(prev => ({
+  ...prev,
+  width: 3000,
+  height: 1500
+}))
+
+// Rotate (45 degrees)
+setRectangleState(prev => ({
+  ...prev,
+  angle: Math.PI / 4
+}))
+```
+
+### Convert angles
+```typescript
+import { radiansToDegrees, degreesToRadians } from './utils/rectangleGeometry'
+
+// Radians to degrees
+const degrees = radiansToDegrees(state.angle)
+
+// Degrees to radians
+const radians = degreesToRadians(45)
+```
+
+### Get rectangle corners
+```typescript
+import { getCornerPositions } from './utils/rectangleGeometry'
+
+const corners = getCornerPositions(rectangleState)
+// Returns: { bottomLeft, bottomRight, topRight, topLeft }
+// Each corner is [x, y] in map coordinates
+```
+
+### Create custom rectangle geometry
+```typescript
+import { createRectangleGeometry } from './utils/rectangleGeometry'
+
+const geometry = createRectangleGeometry(rectangleState)
+// Returns OpenLayers Polygon that can be added to a Feature
+```
+
+### Transform rectangle center to lat/lon
+```typescript
+import { transform } from 'ol/proj'
+
+const [longitude, latitude] = transform(
+  rectangleState.center,
+  'EPSG:3857',
+  'EPSG:4326'
+)
+```
+
+### Listen to rectangle changes
+```typescript
+const handleRectangleChange = (newState: RectangleState) => {
+  console.log('Rectangle changed:', {
+    width: newState.width,
+    height: newState.height,
+    angle: radiansToDegrees(newState.angle)
+  })
+  
+  // Save to backend, update other state, etc.
+  setRectangleState(newState)
+}
+
+<RectangleOverlay
+  map={map}
+  state={rectangleState}
+  onChange={handleRectangleChange}
+/>
 ```
 
 ---

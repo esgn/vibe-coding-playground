@@ -18,13 +18,17 @@ Welcome! This guide explains EVERYTHING about this React + OpenLayers project, e
 
 ## 🎯 WHAT IS THIS PROJECT?
 
-This is a web application that displays an interactive map of France. Think of it like Google Maps, but simpler and using French government map data (IGN).
+This is a web application that displays an interactive map of France with an overlay tool for defining rectangular areas. Think of it like Google Maps with a selection tool, using French government map data (IGN).
 
 **What can you do with it?**
-- View a map in your web browser
-- Zoom in and out
-- Pan around (drag the map)
-- See detailed French geographic data
+- View a detailed map in your web browser
+- Zoom in and out, pan around
+- Draw and manipulate a rectangle on the map
+- Resize the rectangle by dragging corners
+- Rotate the rectangle by dragging the top handle
+- Move the rectangle by dragging its body
+- Export the rectangle coordinates in YAML format
+- See detailed French geographic data from IGN
 
 ---
 
@@ -73,18 +77,29 @@ react_open_layers/
 │   ├── components/               # Reusable UI pieces
 │   │   ├── MapComponent.tsx      # The map display
 │   │   ├── MapComponent.css      # Map styles
+│   │   ├── RectangleOverlay.tsx  # Rectangle overlay on map
+│   │   ├── RectangleControls.tsx # Rectangle properties panel
+│   │   ├── RectangleControls.css # Controls panel styles
 │   │   ├── ErrorBoundary.tsx     # Error catcher
 │   │   └── index.ts              # Easy imports
 │   │
 │   ├── hooks/                    # Custom React hooks (logic)
 │   │   ├── useMap.ts             # Map initialization logic
+│   │   ├── useRectangleOverlay.ts # Rectangle overlay logic
 │   │   └── index.ts              # Easy imports
 │   │
+│   ├── interactions/             # User interaction handlers
+│   │   └── RectangleInteraction.ts # Rectangle drag/resize/rotate
+│   │
+│   ├── utils/                    # Utility functions
+│   │   └── rectangleGeometry.ts  # Math for rectangle calculations
+│   │
 │   ├── config/                   # Configuration settings
-│   │   └── map.config.ts         # Map settings (URLs, zoom levels, etc.)
+│   │   └── map.config.ts         # Map settings (URLs, zoom levels)
 │   │
 │   ├── types/                    # TypeScript type definitions
-│   │   └── map.types.ts          # Types for map-related code
+│   │   ├── map.types.ts          # Types for map-related code
+│   │   └── rectangle.types.ts    # Types for rectangle overlay
 │   │
 │   ├── App.tsx                   # Main app component
 │   ├── App.css                   # App styles
@@ -92,6 +107,9 @@ react_open_layers/
 │   ├── index.css                 # Global styles
 │   └── examples.tsx              # Usage examples
 │
+├── .github/
+│   └── workflows/
+│       └── gh-pages.yml          # GitHub Pages deployment
 ├── public/                       # Static files (served as-is)
 ├── index.html                    # The HTML page
 ├── package.json                  # Project dependencies
@@ -104,6 +122,8 @@ react_open_layers/
 
 **components/** - Visual pieces (what users see)
 **hooks/** - Logic pieces (how things work)
+**interactions/** - User input handlers (mouse/keyboard events)
+**utils/** - Helper functions (math, conversions)
 **config/** - Settings (what can be changed)
 **types/** - Type definitions (prevents bugs)
 
@@ -122,13 +142,13 @@ Loads main.tsx
       ↓
 Renders App.tsx
       ↓
-Renders MapComponent.tsx
+Renders MapComponent.tsx + RectangleOverlay + RectangleControls
       ↓
-Calls useMap.ts hook
+Calls useMap.ts hook (initializes map)
       ↓
-Initializes OpenLayers map
+Calls useRectangleOverlay.ts hook (adds rectangle)
       ↓
-Map appears on screen!
+Map with interactive rectangle appears on screen!
 ```
 
 ### File by File Explanation
@@ -197,6 +217,57 @@ interface MapComponentProps {
 }
 ```
 TypeScript definitions that enforce correct usage.
+
+#### 8. **RectangleOverlay.tsx** - The Rectangle Renderer
+```typescript
+export function RectangleOverlay({ map, state, onChange }) {
+  useRectangleOverlay(map, state, onChange)
+  return null  // Renders to OpenLayers, not React DOM
+}
+```
+A "renderless" component that creates rectangle features on the map.
+
+#### 9. **RectangleControls.tsx** - The Properties Panel
+```typescript
+export function RectangleControls({ state, onChange }) {
+  // Shows width, height, angle
+  // Allows manual input
+  // Export to YAML button
+}
+```
+UI panel in the top-right corner showing rectangle properties.
+
+#### 10. **useRectangleOverlay.ts** - Rectangle Logic
+```typescript
+export function useRectangleOverlay(map, state, onChange) {
+  // 1. Create vector layer
+  // 2. Create rectangle + handle features
+  // 3. Setup interaction handlers
+  // 4. Update on state changes
+}
+```
+Manages all the rectangle overlay logic and rendering.
+
+#### 11. **RectangleInteraction.ts** - User Input Handler
+```typescript
+export class RectangleInteraction {
+  // Listen for mouse/touch events
+  // Handle drag, resize, rotate operations
+  // Update rectangle state
+  // Provide cursor feedback
+}
+```
+Handles all user interactions with the rectangle (drag/resize/rotate).
+
+#### 12. **rectangleGeometry.ts** - Math Helper
+```typescript
+export function createRectangleGeometry(state) {
+  // Apply rotation transformations
+  // Calculate corner positions
+  // Return OpenLayers Polygon
+}
+```
+Mathematical functions for rectangle calculations and transformations.
 
 ---
 
@@ -441,6 +512,51 @@ Edit `src/components/MapComponent.css`:
 }
 ```
 
+### Customize Rectangle Appearance
+
+Edit `src/App.tsx` to change rectangle colors:
+
+```typescript
+<RectangleOverlay
+  map={map}
+  state={rectangleState}
+  onChange={handleRectangleChange}
+  style={{
+    fillColor: 'rgba(255, 0, 0, 0.3)',  // Red fill, 30% transparent
+    strokeColor: '#ff0000',              // Red border
+    strokeWidth: 3,                       // Thicker border
+    handleSize: 10,                       // Larger handles
+    handleColor: '#ffffff'                // White handles
+  }}
+/>
+```
+
+### Change Initial Rectangle Size
+
+Edit `src/App.tsx` in the `handleMapInit` function:
+
+```typescript
+const rectangleState: RectangleState = {
+  center: center as [number, number],
+  width: 5000,   // 5 kilometers wide
+  height: 2500,  // 2.5 kilometers tall
+  angle: Math.PI / 4,  // 45 degrees rotation
+}
+```
+
+### Move Controls Panel Position
+
+Edit `src/App.tsx`:
+
+```typescript
+<RectangleControls
+  state={rectangleState}
+  onChange={handleRectangleChange}
+  position="bottom-left"  // Or: top-left, bottom-right, top-right
+  editable={true}
+/>
+```
+
 ### Add New Features
 
 1. **Add a marker:**
@@ -524,6 +640,25 @@ A: Yes! Change the WMTS source in `map.config.ts` to any WMTS-compatible service
 
 **Q: How do I add more layers?**
 A: Create additional TileLayer or VectorLayer objects and add them to the map's layers array.
+
+**Q: How does the rectangle overlay work?**
+A: It uses OpenLayers vector features (polygon for body, circles for handles) rendered on a separate layer. User interactions are captured by RectangleInteraction class which updates the state.
+
+**Q: Why does the rectangle use radians instead of degrees?**
+A: JavaScript's Math functions (Math.sin, Math.cos, Math.atan2) all use radians. We convert to degrees for display in the UI.
+
+**Q: What's EPSG:3857 vs EPSG:4326?**
+A: EPSG:3857 is Web Mercator (meters from equator/prime meridian, used for display). EPSG:4326 is WGS84 (latitude/longitude in degrees, used for GPS and export).
+
+**Q: How do I disable the rectangle overlay?**
+A: Simply don't render the RectangleOverlay and RectangleControls components in App.tsx. Comment them out or add a conditional.
+
+**Q: Can I have multiple rectangles?**
+A: The current implementation supports one rectangle. To add more, you'd need to:
+1. Change `rectangleState` to an array of rectangles
+2. Render multiple RectangleOverlay components
+3. Update the interaction handler to manage multiple rectangles
+4. Add UI to select which rectangle is active
 
 ---
 
