@@ -111,6 +111,18 @@ export const useMap = (options: MapComponentProps = {}) => {
   // This will trigger a re-render to show the error message
   const [error, setError] = useState<Error | null>(null)
 
+  // REFS FOR CALLBACKS
+  // Store callback references so they don't need to be in useEffect dependencies.
+  // This prevents the effect from re-running when callbacks change.
+  const onMapInitRef = useRef(onMapInit)
+  const onErrorRef = useRef(onError)
+  
+  // Update refs when callbacks change (without triggering useEffect)
+  useEffect(() => {
+    onMapInitRef.current = onMapInit
+    onErrorRef.current = onError
+  }, [onMapInit, onError])
+
   // USE_EFFECT HOOK
   // This is where the magic happens! useEffect runs after the component renders.
   // 
@@ -309,7 +321,7 @@ export const useMap = (options: MapComponentProps = {}) => {
       // OPTIONAL CALLBACK: If user provided an onMapInit function, call it now
       // The ?. is "optional chaining" - only calls the function if it exists
       // This lets the parent component do something with the map after it's ready
-      onMapInit?.(map)
+      onMapInitRef.current?.(map)
     } catch (err) {
       // ========================================================================
       // ERROR HANDLING
@@ -332,7 +344,7 @@ export const useMap = (options: MapComponentProps = {}) => {
       setIsLoading(false)
       
       // Call the error callback if user provided one
-      onError?.(mapError)
+      onErrorRef.current?.(mapError)
 
       // Log to console for developers to see
       console.error('Map initialization error:', mapError)
@@ -363,12 +375,13 @@ export const useMap = (options: MapComponentProps = {}) => {
         mapInstanceRef.current = null
       }
     }
-  }, [center, initialZoom, minZoom, maxZoom, onMapInit, onError])
+  }, [center, initialZoom, minZoom, maxZoom])
   // ^
   // |
   // DEPENDENCY ARRAY: useEffect re-runs if any of these values change
   // If user changes center, zoom, etc., we re-initialize the map
   // If these don't change, the effect only runs once (on mount)
+  // Note: Callbacks (onMapInit, onError) are handled via refs, not dependencies
 
   // ========================================================================
   // RETURN VALUE
