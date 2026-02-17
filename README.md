@@ -2,6 +2,14 @@
 
 A simple React + TypeScript webapp that displays an OpenLayers map in full screen with the PLAN IGN V2 WMTS dataset from IGN France.
 
+## 📖 Documentation
+
+- **[Beginner's Guide](BEGINNERS_GUIDE.md)** - Complete guide for beginners with detailed explanations
+- **[Quick Reference](QUICK_REFERENCE.md)** - Handy cheat sheet for common tasks
+- **[Usage Examples](src/examples.tsx)** - Code examples showing different use cases
+
+💡 **New to React/TypeScript/OpenLayers?** Start with the [Beginner's Guide](BEGINNERS_GUIDE.md)!
+
 ## Features
 
 - ✅ Full screen OpenLayers map
@@ -192,14 +200,6 @@ The `MapComponent` accepts the following props:
 | `className` | `string` | `''` | Additional CSS class for the map container |
 | `onMapInit` | `(map: Map) => void` | `undefined` | Callback when map is initialized |
 | `onError` | `(error: Error) => void` | `undefined` | Callback when map fails to initialize |
-
-## IGN API Key
-
-This project uses the public WMTS endpoint from IGN France. For production use, you should:
-
-1. Register at [IGN Géoportail](https://geoservices.ign.fr/)
-2. Get your own API key
-3. Update the URL in [src/config/map.config.ts](src/config/map.config.ts)
 
 ## License
 
