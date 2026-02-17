@@ -71,6 +71,9 @@ export class RectangleInteraction {
   /** Which corner is being dragged (for resize) */
   private draggedCorner: CornerIdentifier | null = null
   
+  /** Initial angle from center to cursor when rotation starts */
+  private startAngle: number | null = null
+  
   /** Whether Shift key is pressed (for aspect ratio lock, angle snap) */
   private shiftPressed: boolean = false
   
@@ -220,6 +223,12 @@ export class RectangleInteraction {
         this.draggedCorner = feature.get('cornerId') as CornerIdentifier
       }
       
+      // For rotation handle, remember initial angle offset
+      if (handleType === 'rotate') {
+        const startCoord = this.map.getCoordinateFromPixel(event.pixel) as [number, number]
+        this.startAngle = calculateAngle(this.rectangleState.center, startCoord)
+      }
+      
       // Prevent map panning while dragging handle
       event.stopPropagation()
     } else if (feature.get('type') === 'rectangle') {
@@ -275,6 +284,7 @@ export class RectangleInteraction {
       this.activeHandle = null
       this.startState = null
       this.startPixel = null
+      this.startAngle = null
       this.mode = null
       this.draggedCorner = null
       
@@ -372,17 +382,25 @@ export class RectangleInteraction {
    * ALGORITHM:
    * 1. Get current cursor position
    * 2. Calculate angle from rectangle center to cursor
-   * 3. Optionally snap to 15° increments (if Shift pressed)
-   * 4. Update rectangle angle
+   * 3. Calculate angle delta from initial position
+   * 4. Add delta to original angle
+   * 5. Optionally snap to 15° increments (if Shift pressed)
+   * 6. Update rectangle angle
    */
   private handleRotate(event: MapBrowserEvent<UIEvent>): void {
-    if (!this.startState) return
+    if (!this.startState || this.startAngle === null) return
     
     // Get current cursor position
     const currentCoord = this.map.getCoordinateFromPixel(event.pixel) as [number, number]
     
-    // Calculate angle from rectangle center to cursor
-    const angle = calculateAngle(this.rectangleState.center, currentCoord)
+    // Calculate current angle from rectangle center to cursor
+    const currentAngle = calculateAngle(this.rectangleState.center, currentCoord)
+    
+    // Calculate angle delta from initial position
+    const angleDelta = currentAngle - this.startAngle
+    
+    // Add delta to original angle
+    const angle = this.startState.angle + angleDelta
     
     // If Shift pressed, snap to 15° increments
     const finalAngle = this.shiftPressed ? snapAngle(angle) : angle
