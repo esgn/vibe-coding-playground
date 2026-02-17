@@ -1,20 +1,87 @@
+/**
+ * ==============================================================================
+ * GLOBAL STYLES (index.css)
+ * ==============================================================================
+ * 
+ * This file contains CSS styles that apply to the ENTIRE application.
+ * It sets up basic styling, resets browser defaults, and ensures the app
+ * takes up the full screen.
+ * 
+ * These styles load first and affect everything.
+ * ==============================================================================
+ */
+
+/**
+ * UNIVERSAL SELECTOR (*)
+ * The asterisk (*) selects ALL elements on the page.
+ * This is called a "CSS reset" - we reset default browser styles
+ * to have consistent styling across all browsers.
+ */
 * {
+  /* MARGIN: Space OUTSIDE an element
+     Setting to 0 removes all default margins */
   margin: 0;
+  
+  /* PADDING: Space INSIDE an element (between border and content)
+     Setting to 0 removes all default padding */
   padding: 0;
+  
+  /* BOX-SIZING: How width/height are calculated
+     - "content-box" (default): width/height only includes content
+     - "border-box": width/height includes content + padding + border
+     border-box makes sizing more intuitive and predictable */
   box-sizing: border-box;
 }
 
+/**
+ * BODY ELEMENT
+ * The <body> tag contains all visible content on the page.
+ */
 body {
+  /* Remove any default margin (some browsers add margin to body) */
   margin: 0;
+  
+  /* FONT-FAMILY: Set the default font for the entire app
+     This list is a "font stack" - browsers use the first available font:
+     1. -apple-system: San Francisco (macOS/iOS)
+     2. BlinkMacSystemFont: San Francisco (older macOS/iOS)
+     3. 'Segoe UI': Windows font
+     4. 'Roboto': Android font
+     5. 'Oxygen', 'Ubuntu', etc.: Linux fonts
+     6. sans-serif: Fallback to any sans-serif font
+     
+     This ensures the app looks good on all operating systems */
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;
+  
+  /* -WEBKIT-FONT-SMOOTHING: Makes fonts look smoother on macOS/iOS
+     "antialiased" reduces color fringing on edges of text */
   -webkit-font-smoothing: antialiased;
+  
+  /* -MOZ-OSX-FONT-SMOOTHING: Firefox equivalent for macOS
+     "grayscale" renders text in grayscale before applying color */
   -moz-osx-font-smoothing: grayscale;
 }
 
+/**
+ * ROOT ELEMENT (#root)
+ * This is the <div id="root"> in index.html where React renders.
+ * We make it fill the entire viewport so our map can be full-screen.
+ */
 #root {
+  /* WIDTH: 100vw = 100% of viewport width
+     "vw" = viewport width units
+     1vw = 1% of browser window width */
   width: 100vw;
+  
+  /* HEIGHT: 100vh = 100% of viewport height
+     "vh" = viewport height units  
+     1vh = 1% of browser window height */
   height: 100vh;
+  
+  /* OVERFLOW: What happens to content that doesn't fit
+     "hidden" = clip it (don't show scrollbars)
+     This prevents scrollbars on the page since our map fills the screen */
   overflow: hidden;
 }

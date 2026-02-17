@@ -1,4 +1,31 @@
+/**
+ * ==============================================================================
+ * APP COMPONENT STYLES (App.css)
+ * ==============================================================================
+ * 
+ * Styles specific to the App component.
+ * Since our App is just a container for the map, we make it fill all available space.
+ * ==============================================================================
+ */
+
+/**
+ * .App CLASS
+ * Applied to the root <div> in App.tsx
+ */
 .App {
+  /* WIDTH: 100% of parent container
+     Parent is #root, which is 100vw (full viewport width)
+     So .App also takes full width */
   width: 100%;
+  
+  /* HEIGHT: 100% of parent container
+     Parent is #root, which is 100vh (full viewport height)
+     So .App also takes full height */
   height: 100%;
 }
+
+/*
+ * RESULT:
+ * The App container fills the entire screen, and MapComponent inside
+ * it will also fill the entire screen, giving us a full-screen map.
+ */
